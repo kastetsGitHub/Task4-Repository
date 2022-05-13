@@ -7,18 +7,22 @@ public class HealthBar : MonoBehaviour
 {
     [SerializeField] private Slider _slider;
     [SerializeField] private float _speed;
+    [SerializeField] private Player _player;
 
+    private Coroutine _coroutine;
     private bool _isAdjust;
 
     private void Start()
     {
         _isAdjust = true;
+        _player.OnChangedHealth += SetHealth;
+        SetMaxHealth();
     }
 
-    public void SetMaxHealth(float health)
+    private void SetMaxHealth()
     {
-        _slider.maxValue = health;
-        _slider.value = health;
+        _slider.maxValue = _player.MaxHealth;
+        _slider.value = _player.Health;
     }
 
     public void SetHealth(float health)
