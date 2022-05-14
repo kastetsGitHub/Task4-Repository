@@ -5,15 +5,16 @@ using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
-    public event UnityAction<float> OnChangedHealth; 
+    [SerializeField] private PlayerData _playerData;
+
+    public PlayerData PlayerData => _playerData;
     public float Health { get; private set; }
-    public float MaxHealth => _maxHealth;
 
-    [SerializeField] private float _maxHealth;
+    public event UnityAction HealthChanged; 
 
-    private void Start()
+    private void Awake()
     {
-        Health = _maxHealth;
+        Health = PlayerData.MaxHealth;
     }
 
     private void Update()
@@ -38,12 +39,12 @@ public class Player : MonoBehaviour
         if (Health - damage > 0)
         {
             Health -= damage;
-            OnChangedHealth?.Invoke(Health);
+            HealthChanged?.Invoke();
         }
         else
         {
             Health = 0f;
-            OnChangedHealth?.Invoke(Health);
+            HealthChanged?.Invoke();
         }
     }
 
@@ -51,10 +52,10 @@ public class Player : MonoBehaviour
     {
         int health = 10;
 
-        if (Health + health <= _maxHealth)
+        if (Health + health <= PlayerData.MaxHealth)
         {
             Health += health;
-            OnChangedHealth?.Invoke(Health);
+            HealthChanged?.Invoke();
         }
     }
 }

@@ -6,58 +6,66 @@ using UnityEngine.UI;
 public class HealthBar : MonoBehaviour
 {
     [SerializeField] private Slider _slider;
-    [SerializeField] private float _speed;
     [SerializeField] private Player _player;
+    [SerializeField] private float _speedOfFill;
 
-    private Coroutine _coroutine;
     private bool _isAdjust;
+
+    private void OnEnable()
+    {
+        _player.HealthChanged += SetHealth;
+    }
+
+    private void OnDisable()
+    {
+        _player.HealthChanged -= SetHealth;
+    }
 
     private void Start()
     {
-        _isAdjust = true;
-        _player.OnChangedHealth += SetHealth;
+        _isAdjust = true;       
         SetMaxHealth();
     }
 
     private void SetMaxHealth()
     {
-        _slider.maxValue = _player.MaxHealth;
+        _slider.maxValue = _player.PlayerData.MaxHealth;
         _slider.value = _player.Health;
     }
 
-    public void SetHealth(float health)
+    private void SetHealth()
     {
         if (_isAdjust)
         {
-            StartCoroutine(AdjustingFill(health));
+            StartCoroutine(AdjustingFill());
         }
     }
 
-    private IEnumerator AdjustingFill(float health)
+    private IEnumerator AdjustingFill()
     {
         _isAdjust = false;
 
-        if (health > _slider.value)
+        if (_player.Health > _slider.value)
         {
-            while (health > _slider.value)
+            while (_player.Health > _slider.value)
             {
-                Adjust();
+                AdjustFill();
                 yield return null;
             }
         }
 
-        if (health < _slider.value)
+        if (_player.Health < _slider.value)
         {
-            while (health < _slider.value)
+            while (_player.Health < _slider.value)
             {
-                Adjust();
+                AdjustFill();
                 yield return null;
             }
         }
         
-        void Adjust()
+        void AdjustFill()
         {
-            _slider.value = Mathf.MoveTowards(_slider.value, health, _speed * Time.deltaTime);
+            _slider.value = Mathf.MoveTowards(_slider.value, _player.Health, _speedOfFill * Time.deltaTime);
         }
 
         _isAdjust = true;
