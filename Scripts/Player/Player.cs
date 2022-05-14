@@ -10,8 +10,6 @@ public class Player : MonoBehaviour
     public PlayerData PlayerData => _playerData;
     public float Health { get; private set; }
 
-    public event UnityAction HealthChanged; 
-
     private void Awake()
     {
         Health = PlayerData.MaxHealth;
@@ -39,12 +37,10 @@ public class Player : MonoBehaviour
         if (Health - damage > 0)
         {
             Health -= damage;
-            HealthChanged?.Invoke();
         }
         else
         {
             Health = 0f;
-            HealthChanged?.Invoke();
         }
     }
 
@@ -55,7 +51,6 @@ public class Player : MonoBehaviour
         if (Health + health <= PlayerData.MaxHealth)
         {
             Health += health;
-            HealthChanged?.Invoke();
         }
     }
 }
